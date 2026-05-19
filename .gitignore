@@ -1,0 +1,6 @@
+# Carpetas de compilación de .NET
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+*.user
