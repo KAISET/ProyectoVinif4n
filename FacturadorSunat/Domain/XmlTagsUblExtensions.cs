@@ -4,5 +4,5 @@ namespace FacturadorSunat.Domain;
 
 public static class XmlTagsUblExtensions
 {
-    public static XName UblExtensions = XmlTagsPrefix.Extensions + ":UBLExtensions";
+    public static XName UblExtensions = UblExtensions + XmlTagsPrefix.Extensions + "UBLExtensions";
 }

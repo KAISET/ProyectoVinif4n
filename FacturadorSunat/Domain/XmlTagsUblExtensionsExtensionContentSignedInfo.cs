@@ -8,7 +8,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a ./ds:SignedInfo
     /// </summary>
-    public readonly XName SignedInfo = XmlTagsPrefix.DigitalSignature + ":SignedInfo";
+    public readonly XName SignedInfo = XmlTagsPrefix.DigitalSignature + "SignedInfo";
     
     /// <summary>
     /// Equivale a ./ds:CanonicalizationMethod@Algorithm 
@@ -23,7 +23,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale al prefijo ./ds:Reference
     /// </summary>
-    private static readonly String Reference = XmlTagsPrefix.DigitalSignature + ":Reference";
+    private static readonly String Reference = XmlTagsPrefix.DigitalSignature + "Reference";
 
     /// <summary>
     /// Equivale a: ./ds:Reference@URI 
@@ -33,12 +33,12 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale al prefijo ds:Transforms
     /// </summary>
-    private static readonly String Transforms = XmlTagsPrefix.DigitalSignature + ":Transforms";
+    private static readonly String Transforms = XmlTagsPrefix.DigitalSignature + "Transforms";
 
     /// <summary>
     /// Equivale al prefijo ds:Transform
     /// </summary>
-    private static readonly String Transform = XmlTagsPrefix.DigitalSignature + ":Transform";
+    private static readonly String Transform = XmlTagsPrefix.DigitalSignature + "Transform";
 
     /// <summary>
     /// Equivale a los prefijos ./ds:Reference/ds:Transforms/ds:Transform
@@ -58,7 +58,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale al prefijo ds:DigestMethod
     /// </summary>
-    private static readonly String DigestMethod = XmlTagsPrefix.DigitalSignature + ":DigestMethod";
+    private static readonly String DigestMethod = XmlTagsPrefix.DigitalSignature + "DigestMethod";
 
     /// <summary>
     /// Equivale a los prefijos ./ds:Reference/ds:DigestMethod
@@ -77,7 +77,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale al prefijo ds:DigestValue
     /// </summary>
-    private static readonly String DigestValueWithPrefix = XmlTagsPrefix.DigitalSignature + ":DigestValue";
+    private static readonly String DigestValueWithPrefix = XmlTagsPrefix.DigitalSignature + "DigestValue";
 
     /// <summary>
     /// Equivale a los prefijos ./ds:Reference/ds:DigestMethod
