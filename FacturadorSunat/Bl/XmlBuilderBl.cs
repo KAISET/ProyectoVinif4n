@@ -23,14 +23,15 @@ public class XmlBuilderBl
     /// </summary>
     /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
     /// <returns>A <see cref="String"/></returns>
-    public String BuildSignatureXML(DigitalSignature digitalSignatureValues)
+    public OperationResult<String> BuildSignatureXML(DigitalSignature digitalSignatureValues)
     {
-        String XMLDSIG = String.Empty;
+        OperationResult<String> operationResult = new OperationResult<String>();
+
         try
         {
             if(digitalSignatureValues == null)
             {
-                return XMLDSIG;
+                return operationResult.SetOperationResult(false, null, 400);
             }
 
             XmlTagsUblExtensionsExtensionContentSignature xmlSignature = new XmlTagsUblExtensionsExtensionContentSignature();
@@ -53,14 +54,15 @@ public class XmlBuilderBl
             , xmlSignatureContent
             , xmlSignedInfoContent);
 
-            XMLDSIG = extensionContent.ToString();
+            String XMLDSIG = extensionContent.ToString();
+            operationResult.SetOperationResult(true, XMLDSIG, 200);
 
         }
         catch(Exception ex)
         {
-            XMLDSIG = $"Error al generar XMLDSIG: {ex.Message}";
+            operationResult.SetOperationResult(false, null, 400, $"Error al generar XMLDSIG: {ex.Message}");
         }
 
-        return XMLDSIG;
+        return operationResult;
     }
 }
