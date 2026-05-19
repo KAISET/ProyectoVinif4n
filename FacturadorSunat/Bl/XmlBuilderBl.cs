@@ -22,7 +22,7 @@ public class XmlBuilderBl
     /// Construlle la seccion XML para la firma XMLDSIG 
     /// </summary>
     /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
-    /// <returns>A <see cref="String"/></returns>
+    /// <returns>A <see cref="OperationResult{String}"/></returns>
     public OperationResult<String> BuildSignatureXML(DigitalSignature digitalSignatureValues)
     {
         OperationResult<String> operationResult = new OperationResult<String>();
@@ -56,7 +56,6 @@ public class XmlBuilderBl
 
             String XMLDSIG = extensionContent.ToString();
             operationResult.SetOperationResult(true, XMLDSIG, 200);
-
         }
         catch(Exception ex)
         {
