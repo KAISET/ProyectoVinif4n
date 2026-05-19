@@ -4,5 +4,5 @@ namespace FacturadorSunat.Domain;
 
 public static class XmlTags
 {
-    public static readonly XNamespace Invoice = "Invoice";
+    public static readonly XName Invoice = "Invoice";
 }

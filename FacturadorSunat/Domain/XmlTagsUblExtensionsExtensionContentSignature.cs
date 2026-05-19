@@ -8,14 +8,14 @@ public class XmlTagsUblExtensionsExtensionContentSignature
     /// <summary>
     /// Equivale a ./ds:Signature @Id
     /// </summary>
-    public readonly XNamespace SignatureId = XmlTagsPrefix.DigitalSignature + ":Signature @Id";
+    public readonly XName SignatureId = XmlTagsPrefix.DigitalSignature + ":Signature @Id";
 
     public readonly XmlTagsUblExtensionsExtensionContentSignedInfo? SignedInfo;
     
     /// <summary>
     /// Equivale a: ./ds:SignatureValue
     /// </summary>
-    public readonly XNamespace SignatureValue = XmlTagsPrefix.DigitalSignature + ":SignatureValue";
+    public readonly XName SignatureValue = XmlTagsPrefix.DigitalSignature + ":SignatureValue";
     
     private static readonly String KeyInfo = XmlTagsPrefix.DigitalSignature + ":KeyInfo";
     private static readonly String X509Data = XmlTagsPrefix.DigitalSignature + ":X509Data";
@@ -30,5 +30,5 @@ public class XmlTagsUblExtensionsExtensionContentSignature
     /// <summary>
     /// Equivale a: ./ds:KeyInfo/ds:X509Data/ds:X509Certificate
     /// </summary>
-    public readonly XNamespace X509Certificate = Tools.BuildComplexTagPrefix(CertificateItems);
+    public readonly XName X509Certificate = Tools.BuildComplexTagPrefix(CertificateItems);
 }

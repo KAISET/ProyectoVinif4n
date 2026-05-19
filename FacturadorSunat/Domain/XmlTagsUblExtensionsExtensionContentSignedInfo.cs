@@ -8,17 +8,17 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a ./ds:SignedInfo
     /// </summary>
-    public readonly XNamespace SignedInfo = XmlTagsPrefix.DigitalSignature + ":SignedInfo";
+    public readonly XName SignedInfo = XmlTagsPrefix.DigitalSignature + ":SignedInfo";
     
     /// <summary>
     /// Equivale a ./ds:CanonicalizationMethod@Algorithm 
     /// </summary>
-    public readonly XNamespace CanonicalizationMethodAlgorithm = XmlTagsPrefix.DigitalSignature + "CanonicalizationMethod@Algorithm";
+    public readonly XName CanonicalizationMethodAlgorithm = XmlTagsPrefix.DigitalSignature + "CanonicalizationMethod@Algorithm";
     
     /// <summary>
     /// Equivale a ./ds:SignatureMethod@Algorithm 
     /// </summary>
-    public readonly XNamespace SignatureMethodAlgorithm = XmlTagsPrefix.DigitalSignature + "SignatureMethod@Algorithm";
+    public readonly XName SignatureMethodAlgorithm = XmlTagsPrefix.DigitalSignature + "SignatureMethod@Algorithm";
 
     /// <summary>
     /// Equivale al prefijo ./ds:Reference
@@ -28,7 +28,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference@URI 
     /// </summary>
-    public readonly XNamespace ReferenceUri = Reference + "@URI";
+    public readonly XName ReferenceUri = Reference + "@URI";
 
     /// <summary>
     /// Equivale al prefijo ds:Transforms
@@ -53,7 +53,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference/ds:Transforms/ds:Transform@Algorithm
     /// </summary>
-    public readonly XNamespace TransformAlgorithm = Tools.BuildComplexTagPrefix(ReferenceTransformItems) + "@Algorithm";
+    public readonly XName TransformAlgorithm = Tools.BuildComplexTagPrefix(ReferenceTransformItems) + "@Algorithm";
 
     /// <summary>
     /// Equivale al prefijo ds:DigestMethod
@@ -72,7 +72,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference/ds:DigestMethod@Algorithm 
     /// </summary>
-    public readonly XNamespace DigestMethodAlgorithm = Tools.BuildComplexTagPrefix(ReferenceDigestMethodItems) + "@Algorithm";
+    public readonly XName DigestMethodAlgorithm = Tools.BuildComplexTagPrefix(ReferenceDigestMethodItems) + "@Algorithm";
 
     /// <summary>
     /// Equivale al prefijo ds:DigestValue
@@ -91,5 +91,5 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference/ds:DigestValue
     /// </summary>
-    public readonly XNamespace DigestValue = Tools.BuildComplexTagPrefix(DigestValueItems);
+    public readonly XName DigestValue = Tools.BuildComplexTagPrefix(DigestValueItems);
 }
