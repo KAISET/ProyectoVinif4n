@@ -53,7 +53,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference/ds:Transforms/ds:Transform@Algorithm
     /// </summary>
-    public readonly XNamespace ReferenceTransform = Tools.BuildComplexTagPrefix(ReferenceTransformItems) + "@Algorithm";
+    public readonly XNamespace TransformAlgorithm = Tools.BuildComplexTagPrefix(ReferenceTransformItems) + "@Algorithm";
 
     /// <summary>
     /// Equivale al prefijo ds:DigestMethod
@@ -72,7 +72,7 @@ public class XmlTagsUblExtensionsExtensionContentSignedInfo
     /// <summary>
     /// Equivale a: ./ds:Reference/ds:DigestMethod@Algorithm 
     /// </summary>
-    public readonly XNamespace DigestMethodAlforithm = Tools.BuildComplexTagPrefix(ReferenceDigestMethodItems) + "@Algorithm";
+    public readonly XNamespace DigestMethodAlgorithm = Tools.BuildComplexTagPrefix(ReferenceDigestMethodItems) + "@Algorithm";
 
     /// <summary>
     /// Equivale al prefijo ds:DigestValue

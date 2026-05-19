@@ -17,6 +17,9 @@ public class XmlBuilderBl
         }
     }
 
-    public String
+    public void BuildSignatureXML()
+    {
+        
+    }
 
 }
