@@ -5,7 +5,7 @@ namespace FacturadorSunat.Domain;
 public class XmlTagsSignedInfo
 {
     [XmlElement(ElementName = "Reference", Namespace = "XmlTagsNamespace.Ds")]
-    public XmlTagsReference TagsReference {get; set;} = new();
+    public XmlTagsReference Reference {get; set;} = new();
 
     [XmlElement(ElementName = "CanonicalizationMethod", Namespace = "XmlTagsNamespace.Ds")]
     public XmlTagsCanonicalizationMethod CanonicalizationMethod {get; set;} = new();

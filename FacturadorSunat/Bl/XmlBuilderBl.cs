@@ -1,4 +1,7 @@
+using System.Text;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using FacturadorSunat.Domain;
 
 namespace FacturadorSunat.Bl;
@@ -34,27 +37,22 @@ public class XmlBuilderBl
                 return operationResult.SetOperationResult(false, null, 400);
             }
 
-            XmlTagsUblExtensionsExtensionContentSignature xmlSignature = new XmlTagsUblExtensionsExtensionContentSignature();
-            XElement xmlSignatureContent = new XElement(xmlSignature.SignatureId, digitalSignatureValues.Id,
-            new XElement(xmlSignature.SignatureValue, digitalSignatureValues.SignatureValue),
-            new XElement(xmlSignature.X509Certificate, digitalSignatureValues.X509Certificate));
+            XmlTagsUblExtensions ublExtensions = new XmlTagsUblExtensions();
 
-            // algunos de estos son requeridos, si estan vacios debe ser return vacio y con error
-            XmlTagsUblExtensionsExtensionContentSignedInfo xmlSignedInfo = new XmlTagsUblExtensionsExtensionContentSignedInfo();
-            XElement xmlSignedInfoContent = new XElement(xmlSignedInfo.SignedInfo,
-            new XElement(xmlSignedInfo.CanonicalizationMethodAlgorithm, digitalSignatureValues.CanonicalizationMethodAlgorithm)
-            , new XElement(xmlSignedInfo.SignatureMethodAlgorithm, digitalSignatureValues.SignatureMethodAlgorithm)
-            , new XElement(xmlSignedInfo.ReferenceUri, digitalSignatureValues.ReferenceUri)
-            , new XElement(xmlSignedInfo.TransformAlgorithm, digitalSignatureValues.TransformAlgorithm)
-            , new XElement(xmlSignedInfo.DigestMethodAlgorithm, digitalSignatureValues.DigestMethodAlgorithm)
-            , new XElement(xmlSignedInfo.DigestValue, digitalSignatureValues.DigestValue));
+            ublExtensions.UblExtensionXMLDSIG.Signature.Id = digitalSignatureValues.Id;
+            //SignedInfo
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.CanonicalizationMethod.Algorithm = digitalSignatureValues.CanonicalizationMethodAlgorithm;
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.SignatureMethod.Algorithm = digitalSignatureValues.SignatureMethodAlgorithm;
+            // Reference
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.Uri = digitalSignatureValues.ReferenceUri;
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.Transforms.Transform.Algorithm = digitalSignatureValues.TransformAlgorithm;
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.DigestMethod.Algorithm = digitalSignatureValues.DigestMethodAlgorithm;
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.DigestValue = digitalSignatureValues.DigestValue;
 
-            XmlTagsUblExtensionsExtensionContentXMLDSIG xmlDsigBody = new XmlTagsUblExtensionsExtensionContentXMLDSIG();
-            XElement extensionContent = new XElement(xmlDsigBody.ExtensionContent!.UblExtensionsExtensionContent
-            , xmlSignatureContent
-            , xmlSignedInfoContent);
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignatureValue = digitalSignatureValues.SignatureValue;
+            ublExtensions.UblExtensionXMLDSIG.Signature.KeyInfo.X509Data.X509Certificate = digitalSignatureValues.X509Certificate;
 
-            String XMLDSIG = extensionContent.ToString();
+            String XMLDSIG = XMLSerializer(ublExtensions);
             operationResult.SetOperationResult(true, XMLDSIG, 200);
         }
         catch(Exception ex)
@@ -63,5 +61,27 @@ public class XmlBuilderBl
         }
 
         return operationResult;
+    }
+
+    private static String XMLSerializer(XmlTagsUblExtensions xmlData)
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(XmlTagsUblExtensions));
+        
+        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+        namespaces.Add("ext", XmlTagsNamespace.Ext);
+        namespaces.Add("ds", XmlTagsNamespace.Ds);
+
+        XmlWriterSettings writerSettings = new XmlWriterSettings()
+        {
+            Encoding = Encoding.UTF8,
+            Indent = true,
+            OmitXmlDeclaration = true
+        };
+
+        using StringWriter stringWriter = new StringWriter();
+        using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, writerSettings);
+
+        serializer.Serialize(xmlWriter, xmlData, namespaces);
+        return stringWriter.ToString();
     }
 }
