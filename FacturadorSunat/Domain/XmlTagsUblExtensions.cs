@@ -1,10 +1,12 @@
-using System.Xml.Linq;
 using System.Xml.Serialization;
 
 namespace FacturadorSunat.Domain;
 
+[XmlRoot(ElementName = "Invoice")]
 public class XmlTagsUblExtensions
 {
-    [XmlElement(ElementName = "ExtensionContent", Namespace = XmlTagsNamespace.Ds)]
-    public XmlTagsUblExtensionContentXMLDSIG UblExtensionXMLDSIG {get; set;} = new();
+    public XmlTagsUblExtensions () {}
+    
+    [XmlElement(ElementName = "UBLExtension", Namespace = XmlTagsNamespace.Ext)]
+    public XmlTagsUBLExtensionXMLDSIG UBLExtensionXMLDSIG {get; set;} = new();
 }

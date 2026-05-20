@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -38,17 +39,10 @@ public class XmlBuilderBl
                 return operationResult;
             }
 
-            XmlTagsUblExtensions ublExtensions = new XmlTagsUblExtensions();
+            XmlTagsUblExtensions ublExtensionsContent = new XmlTagsUblExtensions(){};
+            ublExtensionsContent.UBLExtensionXMLDSIG.XMLDSIGExtentionContent.Signature = BuildSignature(digitalSignatureValues);
 
-            ublExtensions.UblExtensionXMLDSIG.Signature.Id = ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
-
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);
-
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignatureValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureValue ?? "");
-            ublExtensions.UblExtensionXMLDSIG.Signature.KeyInfo.X509Data.X509Certificate = ValidateStringIsNullOrEmpty(digitalSignatureValues.X509Certificate ?? "");
-
-            String XMLDSIG = XMLSerializer(ublExtensions);
+            String XMLDSIG = XMLSerializer(ublExtensionsContent);
             operationResult.SetOperationResult(ref operationResult, true, XMLDSIG, 200);
         }
         catch(Exception ex)
@@ -57,6 +51,18 @@ public class XmlBuilderBl
         }
 
         return operationResult;
+    }
+
+    private static XmlTagsSignature BuildSignature(DigitalSignature digitalSignatureValues)
+    {
+        XmlTagsSignature signature = new XmlTagsSignature();
+        signature.Id = ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
+        signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
+        signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);
+        signature.SignatureValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureValue ?? "");
+        signature.KeyInfo.X509Data.X509Certificate = ValidateStringIsNullOrEmpty(digitalSignatureValues.X509Certificate ?? "");
+
+        return signature;
     }
 
     private static XmlTagsSignedInfo BuildSignedInfo(DigitalSignature digitalSignatureValues)
