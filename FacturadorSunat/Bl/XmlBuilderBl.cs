@@ -86,10 +86,56 @@ public class XmlBuilderBl
         }
         catch(Exception ex)
         {
-            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar XMLDSIG: {ex.Message}");
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar seccion XMLDSIG: {ex.Message}");
         }
 
         return operationResult;
+    }
+
+    /// <summary>
+    /// Construye la seccion XML para la Additional Information
+    /// </summary>
+    /// <param name="digitalSignatureValues">Clase que contiene los valores para Additional Information</param>
+    /// <returns>A <see cref="OperationResult{XmlTagsUBLExtensionAdditionalInformation}"/></returns>
+    public OperationResult<XmlTagsUBLExtensionAdditionalInformation> BuildAdditionalInformationXML(AdditionalInformation additionalInformationValues)
+    {
+        OperationResult<XmlTagsUBLExtensionAdditionalInformation> operationResult = new OperationResult<XmlTagsUBLExtensionAdditionalInformation>();
+
+        try
+        {
+            if(additionalInformationValues == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
+            }
+
+            XmlTagsUBLExtensionAdditionalInformation ublExtensionAdditionalInformation = new XmlTagsUBLExtensionAdditionalInformation();
+            ublExtensionAdditionalInformation.AdditionalInformationExtentionContent.XmlTagsAdditionalInformation = BuildAdditionalInformation(additionalInformationValues);
+
+            operationResult.SetOperationResult(ref operationResult, true, ublExtensionAdditionalInformation, 200);
+        }
+        catch(Exception ex)
+        {
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar seccion Informacion Adicional: {ex.Message}");
+        }
+
+        return operationResult;
+    }
+
+    private static XmlTagsAdditionalInformation BuildAdditionalInformation(AdditionalInformation additionalInformationValues)
+    {
+        XmlTagsAdditionalInformation additionalInformation = new XmlTagsAdditionalInformation();
+        additionalInformation.AdditionalMonetaryTotal.ID = additionalInformationValues.Id;
+        additionalInformation.AdditionalMonetaryTotal.Name = additionalInformationValues.Name;
+        additionalInformation.AdditionalMonetaryTotal.ReferenceAmount = additionalInformationValues.ReferenceAmount;
+        additionalInformation.AdditionalMonetaryTotal.PayableAmount = additionalInformationValues.PayableAmount;
+        additionalInformation.AdditionalMonetaryTotal.Percent = additionalInformationValues.Percent;
+        additionalInformation.AdditionalMonetaryTotal.TotalAmount = additionalInformationValues.TotalAmount;
+        additionalInformation.AdditionalProperty.ID = additionalInformationValues.AdditionalPropertyId;
+        additionalInformation.AdditionalProperty.Name = additionalInformationValues.AdditionalPropertyName;
+        additionalInformation.AdditionalProperty.Value = additionalInformationValues.AdditionalPropertyValue;
+
+        return additionalInformation;
     }
 
     private static XmlTagsSignature BuildSignature(DigitalSignature digitalSignatureValues)

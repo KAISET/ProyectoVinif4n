@@ -30,6 +30,28 @@ public class XmlBuilderBlTests
         Assert.NotNull(resultado.Data);
     }
 
+        [Fact]
+    public void BuildAdditionalInformationXML_Ok()
+    {   
+        AdditionalInformation additionalInformation = new AdditionalInformation
+        {
+            Id = "2001", 
+            Name = "Percepción",
+            ReferenceAmount = "1000.00",
+            PayableAmount = "20.00",
+            Percent = "2.00",
+            TotalAmount = "1020.00",
+            AdditionalPropertyId = "01",
+            AdditionalPropertyName = "Leyenda de Percepción",
+            AdditionalPropertyValue = "Operación sujeta al Sistema de Pago de Obligaciones Tributarias"
+        };
+
+        OperationResult<XmlTagsUBLExtensionAdditionalInformation> resultado = XmlBuilderBl.Instance.BuildAdditionalInformationXML(additionalInformation);
+
+        Assert.True(resultado.Success);
+        Assert.NotNull(resultado.Data.ToString());
+    }
+
     [Fact]
     public void BuildSignatureXML_Ok()
     {   
