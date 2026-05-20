@@ -22,12 +22,7 @@ public class XmlBuilderBl
         }
     }
 
-    /// <summary>
-    /// Construlle la seccion XML para la firma XMLDSIG 
-    /// </summary>
-    /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
-    /// <returns>A <see cref="OperationResult{String}"/></returns>
-    public OperationResult<String> BuildSignatureXML(DigitalSignature digitalSignatureValues)
+    public OperationResult<String> BuildXML(DigitalSignature digitalSignatureValues)
     {
         OperationResult<String> operationResult = new OperationResult<String>();
 
@@ -39,11 +34,50 @@ public class XmlBuilderBl
                 return operationResult;
             }
 
-            XmlTagsUblExtensions ublExtensionsContent = new XmlTagsUblExtensions(){};
-            ublExtensionsContent.UBLExtensionXMLDSIG.XMLDSIGExtentionContent.Signature = BuildSignature(digitalSignatureValues);
+            XmlTagsInvoice invoice = new XmlTagsInvoice();
+            OperationResult<XmlTagsUBLExtensionXMLDSIG> ublExtensionXMLDSIGresult = new OperationResult<XmlTagsUBLExtensionXMLDSIG>();
+            ublExtensionXMLDSIGresult = BuildSignatureXML(digitalSignatureValues);
 
-            String XMLDSIG = XMLSerializer(ublExtensionsContent);
-            operationResult.SetOperationResult(ref operationResult, true, XMLDSIG, 200);
+            if(ublExtensionXMLDSIGresult.Success == false || ublExtensionXMLDSIGresult.Data == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400, "Error al generar XMLDSIG");
+                return operationResult;
+            }
+
+            invoice.UBLExtensions.UBLExtensionXMLDSIG = ublExtensionXMLDSIGresult.Data;
+            String xmlInvoice = XMLSerializer(invoice);
+
+            operationResult.SetOperationResult(ref operationResult, true, xmlInvoice, 200);
+        }
+        catch(Exception ex)
+        {
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar Invoice XML: {ex.Message}");
+        }
+
+        return operationResult;
+    }
+
+    /// <summary>
+    /// Construlle la seccion XML para la firma XMLDSIG 
+    /// </summary>
+    /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
+    /// <returns>A <see cref="OperationResult{String}"/></returns>
+    public OperationResult<XmlTagsUBLExtensionXMLDSIG> BuildSignatureXML(DigitalSignature digitalSignatureValues)
+    {
+        OperationResult<XmlTagsUBLExtensionXMLDSIG> operationResult = new OperationResult<XmlTagsUBLExtensionXMLDSIG>();
+
+        try
+        {
+            if(digitalSignatureValues == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
+            }
+
+            XmlTagsUBLExtensionXMLDSIG ublExtensionXMLDSIG = new XmlTagsUBLExtensionXMLDSIG();
+            ublExtensionXMLDSIG.XMLDSIGExtentionContent.Signature = BuildSignature(digitalSignatureValues);
+
+            operationResult.SetOperationResult(ref operationResult, true, ublExtensionXMLDSIG, 200);
         }
         catch(Exception ex)
         {
@@ -90,9 +124,9 @@ public class XmlBuilderBl
         return stringValue = String.IsNullOrEmpty(stringValue) ? "NoData" : stringValue;
     }
 
-    private static String XMLSerializer(XmlTagsUblExtensions xmlData)
+    private static String XMLSerializer(XmlTagsInvoice xmlData)
     {
-        XmlSerializer serializer = new XmlSerializer(typeof(XmlTagsUblExtensions));
+        XmlSerializer serializer = new XmlSerializer(typeof(XmlTagsInvoice));
         
         XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
         namespaces.Add("ext", XmlTagsNamespace.Ext);

@@ -2,7 +2,6 @@ using System.Xml.Serialization;
 
 namespace FacturadorSunat.Domain;
 
-[XmlRoot(ElementName = "Invoice")]
 public class XmlTagsUblExtensions
 {
     public XmlTagsUblExtensions () {}
