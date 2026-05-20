@@ -1,8 +1,11 @@
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace FacturadorSunat.Domain;
 
-public static class XmlTagsUblExtensions
+[XmlRoot(ElementName = "UBLExtensions", Namespace = "XmlTagsNamespace.Ext")]
+public class XmlTagsUblExtensions
 {
-    public static XName UblExtensions = UblExtensions + XmlTagsPrefix.Extensions + "UBLExtensions";
+    [XmlElement(ElementName = "UBLExtension", Namespace = "XmlTagsNamespace.Ext")]
+    public XmlTagsUblExtensionContentXMLDSIG UblExtensionXMLDSIG {get; set;} = new();
 }
