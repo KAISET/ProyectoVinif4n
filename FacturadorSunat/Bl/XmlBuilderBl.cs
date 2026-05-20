@@ -34,7 +34,8 @@ public class XmlBuilderBl
         {
             if(digitalSignatureValues == null)
             {
-                return operationResult.SetOperationResult(false, null, 400);
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
             }
 
             XmlTagsUblExtensions ublExtensions = new XmlTagsUblExtensions();
@@ -53,11 +54,11 @@ public class XmlBuilderBl
             ublExtensions.UblExtensionXMLDSIG.Signature.KeyInfo.X509Data.X509Certificate = digitalSignatureValues.X509Certificate;
 
             String XMLDSIG = XMLSerializer(ublExtensions);
-            operationResult.SetOperationResult(true, XMLDSIG, 200);
+            operationResult.SetOperationResult(ref operationResult, true, XMLDSIG, 200);
         }
         catch(Exception ex)
         {
-            operationResult.SetOperationResult(false, null, 400, $"Error al generar XMLDSIG: {ex.Message}");
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar XMLDSIG: {ex.Message}");
         }
 
         return operationResult;

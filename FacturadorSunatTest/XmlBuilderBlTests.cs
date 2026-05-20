@@ -24,10 +24,8 @@ public class XmlBuilderBlTests
             DigestValue = "vafds89723hfsf="
         };
 
-        // 2. ACT (Ejecutar el método que estamos evaluando)
         OperationResult<string> resultado = XmlBuilderBl.Instance.BuildSignatureXML(datosPruebaFirma);
 
-        // 3. ASSERT (Verificar que los resultados cumplan las condiciones estrictas)
         Assert.True(resultado.Success);
         Assert.NotNull(resultado.Data);
     }
