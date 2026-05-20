@@ -5,6 +5,6 @@ namespace FacturadorSunat.Domain;
 
 public class XmlTagsUblExtensions
 {
-    [XmlElement(ElementName = "ExtensionContent", Namespace = XmlTagsNamespace.Ext)]
+    [XmlElement(ElementName = "ExtensionContent", Namespace = XmlTagsNamespace.Ds)]
     public XmlTagsUblExtensionContentXMLDSIG UblExtensionXMLDSIG {get; set;} = new();
 }
