@@ -4,6 +4,8 @@ namespace FacturadorSunat.Domain;
 
 public class XmlTagsReference
 {
+    public XmlTagsReference () {}
+    
     [XmlAttribute(AttributeName = "URI")]
     public String Uri {get; set;} = String.Empty;
 

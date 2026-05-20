@@ -12,7 +12,7 @@ public static class Tools
         }
         
         String finalTag = String.Empty;
-        foreach(String item in tags)
+        foreach(String item in tags!)
         {
             String concatenatedItem = "/" + item;
             finalTag += concatenatedItem;

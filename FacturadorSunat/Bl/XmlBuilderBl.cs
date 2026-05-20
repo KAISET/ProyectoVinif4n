@@ -8,7 +8,7 @@ namespace FacturadorSunat.Bl;
 
 public class XmlBuilderBl
 {
-   private static XmlBuilderBl instance = null;
+   private static XmlBuilderBl? instance = null;
    public static XmlBuilderBl Instance
     {
         get
@@ -40,18 +40,13 @@ public class XmlBuilderBl
 
             XmlTagsUblExtensions ublExtensions = new XmlTagsUblExtensions();
 
-            ublExtensions.UblExtensionXMLDSIG.Signature.Id = digitalSignatureValues.Id;
-            //SignedInfo
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.CanonicalizationMethod.Algorithm = digitalSignatureValues.CanonicalizationMethodAlgorithm;
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.SignatureMethod.Algorithm = digitalSignatureValues.SignatureMethodAlgorithm;
-            // Reference
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.Uri = digitalSignatureValues.ReferenceUri;
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.Transforms.Transform.Algorithm = digitalSignatureValues.TransformAlgorithm;
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.DigestMethod.Algorithm = digitalSignatureValues.DigestMethodAlgorithm;
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference.DigestValue = digitalSignatureValues.DigestValue;
+            ublExtensions.UblExtensionXMLDSIG.Signature.Id = ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
 
-            ublExtensions.UblExtensionXMLDSIG.Signature.SignatureValue = digitalSignatureValues.SignatureValue;
-            ublExtensions.UblExtensionXMLDSIG.Signature.KeyInfo.X509Data.X509Certificate = digitalSignatureValues.X509Certificate;
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);
+
+            ublExtensions.UblExtensionXMLDSIG.Signature.SignatureValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureValue ?? "");
+            ublExtensions.UblExtensionXMLDSIG.Signature.KeyInfo.X509Data.X509Certificate = ValidateStringIsNullOrEmpty(digitalSignatureValues.X509Certificate ?? "");
 
             String XMLDSIG = XMLSerializer(ublExtensions);
             operationResult.SetOperationResult(ref operationResult, true, XMLDSIG, 200);
@@ -62,6 +57,31 @@ public class XmlBuilderBl
         }
 
         return operationResult;
+    }
+
+    private static XmlTagsSignedInfo BuildSignedInfo(DigitalSignature digitalSignatureValues)
+    {
+        XmlTagsSignedInfo signedInfo = new XmlTagsSignedInfo();
+        signedInfo.CanonicalizationMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.CanonicalizationMethodAlgorithm ?? "");
+        signedInfo.SignatureMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureMethodAlgorithm ?? "");
+        
+        return signedInfo;
+    }
+
+    private static XmlTagsReference BuildReference(DigitalSignature digitalSignatureValues)
+    {
+        XmlTagsReference reference = new XmlTagsReference();
+        reference.Uri = ValidateStringIsNullOrEmpty(digitalSignatureValues.ReferenceUri ?? "");
+        reference.Transforms.Transform.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.TransformAlgorithm ?? "");
+        reference.DigestMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.DigestMethodAlgorithm ?? "");
+        reference.DigestValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.DigestValue ?? "");
+
+        return reference;
+    }
+
+    private static String ValidateStringIsNullOrEmpty(String stringValue)
+    {
+        return stringValue = String.IsNullOrEmpty(stringValue) ? "NoData" : stringValue;
     }
 
     private static String XMLSerializer(XmlTagsUblExtensions xmlData)
