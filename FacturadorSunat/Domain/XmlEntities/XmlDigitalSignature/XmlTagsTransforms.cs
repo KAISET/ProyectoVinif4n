@@ -5,5 +5,5 @@ namespace FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
 public class XmlTagsTransforms
 {
     [XmlElement(ElementName = "Transform", Namespace = XmlTagsNamespace.Ds)]
-    public XmlTagsTransform Transform {get; set;} = new ();
+    public XmlTagsTransform? Transform {get; set;} = new ();
 }

@@ -7,9 +7,9 @@ public class XmlTagsPayableAmount
     public XmlTagsPayableAmount () {}
 
     [XmlAttribute(AttributeName = "currencyID")]
-    public string CurrencyID { get; set; } = "PEN";
+    public String CurrencyID { get; set; } = "PEN";
 
     [XmlText]
-    public string? Value { get; set; }
+    public String? Value { get; set; }
 }
 
