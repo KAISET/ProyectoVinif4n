@@ -1,5 +1,4 @@
-
-namespace FacturadorSunat.Domain;
+namespace FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
 
 /// <summary>
 /// Clase usada para llenar los tags de la firma XMLDSIG 

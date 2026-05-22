@@ -1,6 +1,8 @@
 using System.Xml.Serialization;
+using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
 
-namespace FacturadorSunat.Domain;
+namespace FacturadorSunat.Domain.XmlEntities.XmlInvoice;
 
 public class XmlTagsUblExtensionContent
 {

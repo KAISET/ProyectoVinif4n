@@ -3,6 +3,11 @@ using System.Net;
 using FacturadorSunat.Bl;
 using FacturadorSunat.Domain;
 using FacturadorSunat.Utility;
+using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
+using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
+using FacturadorSunat.Domain.Entities.SectionDsig;
+using FacturadorSunat.Domain.Entities;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
 
 namespace FacturadorSunatTest;
 

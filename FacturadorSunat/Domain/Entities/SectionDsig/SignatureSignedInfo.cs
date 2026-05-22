@@ -1,5 +1,4 @@
-
-namespace FacturadorSunat.Domain;
+namespace FacturadorSunat.Domain.Entities.SectionDsig;
 
 /// <summary>
 /// Clase usada para llenar las etiquetas de SignedInfo de la firma XMLDSIG 

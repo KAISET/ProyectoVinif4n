@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace FacturadorSunat.Domain;
+namespace FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
 
 public class XmlTagsAdditionalMonetaryTotal
 {

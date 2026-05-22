@@ -4,6 +4,12 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using FacturadorSunat.Domain;
+using FacturadorSunat.Domain.Entities;
+using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
+using FacturadorSunat.Domain.Entities.SectionDsig;
+using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+using FacturadorSunat.Domain.XmlEntities.XmlInvoice;
 
 namespace FacturadorSunat.Bl;
 
@@ -157,7 +163,10 @@ public class XmlBuilderBl
         additionalInformation.AdditionalMonetaryTotal.ID = additionalInformationValues.AdditionalMonetaryTotal.Id;
         additionalInformation.AdditionalMonetaryTotal.Name = additionalInformationValues.AdditionalMonetaryTotal.Name;
         additionalInformation.AdditionalMonetaryTotal.ReferenceAmount = additionalInformationValues.AdditionalMonetaryTotal.ReferenceAmount;
-        additionalInformation.AdditionalMonetaryTotal.PayableAmount = additionalInformationValues.AdditionalMonetaryTotal.PayableAmount;
+        additionalInformation.AdditionalMonetaryTotal.PayableAmount = new XmlTagsPayableAmount()
+        {
+            Value = additionalInformationValues.AdditionalMonetaryTotal.PayableAmount
+        };
         additionalInformation.AdditionalMonetaryTotal.Percent = additionalInformationValues.AdditionalMonetaryTotal.Percent;
         additionalInformation.AdditionalMonetaryTotal.TotalAmount = additionalInformationValues.AdditionalMonetaryTotal.TotalAmount;
         additionalInformation.AdditionalProperty = BuildAdditonalProperty(additionalInformationValues);

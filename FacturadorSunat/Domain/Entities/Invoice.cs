@@ -1,4 +1,7 @@
-namespace FacturadorSunat.Domain;
+using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
+using FacturadorSunat.Domain.Entities.SectionDsig;
+
+namespace FacturadorSunat.Domain.Entities;
 
 /// <summary>
 /// Clase usada para llenar los datos XML para invoice

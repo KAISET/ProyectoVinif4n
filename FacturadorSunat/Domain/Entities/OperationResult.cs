@@ -1,7 +1,7 @@
 using System.Net;
 using System.Xml.Linq;
 
-namespace FacturadorSunat.Domain;
+namespace FacturadorSunat.Domain.Entities;
 
 public class OperationResult<T>
 {
