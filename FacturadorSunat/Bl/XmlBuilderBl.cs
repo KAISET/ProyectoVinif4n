@@ -48,7 +48,22 @@ public class XmlBuilderBl
                 return operationResult;
             }
 
-            XmlTagsUblExtensionItems ublExtensionItems = new XmlTagsUblExtensionItems();
+            if (invoiceData.IsUblExtAdditionalInformationUsed)
+            {
+                OperationResult<XmlTagsAdditionalInformation> ublAdditionalInformation = new OperationResult<XmlTagsAdditionalInformation>();
+                XmlTagsUblExtensionItems ublExtensionItemsAdditionalInformation = new XmlTagsUblExtensionItems();
+                ublAdditionalInformation = BuildAdditionalInformationXML(invoiceData.UblExtAdditionalInformation);
+                if(ublAdditionalInformation.Success == false || ublAdditionalInformation.Data == null)
+                {
+                    operationResult.SetOperationResult(ref operationResult, false, null, 400, "Error al generar informacion adicional");
+                    return operationResult;
+                }
+                
+                ublExtensionItemsAdditionalInformation.ExtensionContent.XmlUblAdditionalInformation = ublAdditionalInformation.Data;
+                xmlTagsUblExtensionItems.Add(ublExtensionItemsAdditionalInformation);
+            }
+
+            XmlTagsUblExtensionItems ublExtensionItemsSignature = new XmlTagsUblExtensionItems();
             // faltan validar que los campos esten llenos
 
             OperationResult<XmlTagsSignature> ublExtensionXMLDSIGresult = new OperationResult<XmlTagsSignature>();
@@ -60,16 +75,8 @@ public class XmlBuilderBl
                 return operationResult;
             }
             
-            ublExtensionItems.ExtensionContent.XmlUblSignature = ublExtensionXMLDSIGresult.Data;
-            xmlTagsUblExtensionItems.Add(ublExtensionItems);
-
-            if (invoiceData.IsUblExtAdditionalInformationUsed)
-            {
-                OperationResult<XmlTagsAdditionalInformation> ublAdditionalInformation = new OperationResult<XmlTagsAdditionalInformation>();
-                ublAdditionalInformation = BuildAdditionalInformationXML(invoiceData.UblExtAdditionalInformation);
-                ublExtensionItems.ExtensionContent.XmlUblAdditionalInformation = ublAdditionalInformation.Data;
-                xmlTagsUblExtensionItems.Add(ublExtensionItems);
-            }
+            ublExtensionItemsSignature.ExtensionContent.XmlUblSignature = ublExtensionXMLDSIGresult.Data;
+            xmlTagsUblExtensionItems.Add(ublExtensionItemsSignature);
 
             invoice.UBLExtensions.UBLExtensionsItems = xmlTagsUblExtensionItems;
             String xmlInvoice = XMLSerializer(invoice);
