@@ -2,7 +2,7 @@ using System.Xml.Serialization;
 
 namespace FacturadorSunat.Domain;
 
-[XmlRoot(ElementName = "Invoice")]
+[XmlRoot(ElementName = "Invoice", Namespace = XmlTagsNamespace.RootInvoice)]
 public class XmlTagsInvoice
 {
     public XmlTagsInvoice () {}
