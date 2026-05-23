@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 
-namespace FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+namespace FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 
 public class XmlTagsCanonicalizationMethod
 {

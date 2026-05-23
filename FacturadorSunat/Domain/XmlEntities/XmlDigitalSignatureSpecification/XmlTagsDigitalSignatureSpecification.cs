@@ -1,8 +1,11 @@
 using System.Xml.Serialization;
 
-namespace FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+namespace FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 
-public class XmlTagsSignature
+/// <summary>
+/// 
+/// </summary>
+public class XmlTagsDigitalSignatureSpecification
 {
     [XmlAttribute(AttributeName = "Id")]
     public String? Id {get; set;} = String.Empty;

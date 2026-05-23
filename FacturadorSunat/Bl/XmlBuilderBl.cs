@@ -8,7 +8,7 @@ using FacturadorSunat.Domain.Entities;
 using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
 using FacturadorSunat.Domain.Entities.SectionDsig;
 using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
-using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 using FacturadorSunat.Domain.XmlEntities.XmlInvoice;
 
 namespace FacturadorSunat.Bl;
@@ -72,7 +72,7 @@ public class XmlBuilderBl
             XmlTagsUblExtensionItems ublExtensionItemsSignature = new XmlTagsUblExtensionItems();
             // faltan validar que los campos esten llenos
 
-            OperationResult<XmlTagsSignature> ublExtensionXMLDSIGresult = new OperationResult<XmlTagsSignature>();
+            OperationResult<XmlTagsDigitalSignatureSpecification> ublExtensionXMLDSIGresult = new OperationResult<XmlTagsDigitalSignatureSpecification>();
             ublExtensionXMLDSIGresult = BuildSignatureXML(invoiceData.UblExtSignature);
 
             if(ublExtensionXMLDSIGresult.Success == false || ublExtensionXMLDSIGresult.Data == null)
@@ -81,7 +81,7 @@ public class XmlBuilderBl
                 return operationResult;
             }
             
-            ublExtensionItemsSignature.ExtensionContent.XmlUblSignature = ublExtensionXMLDSIGresult.Data;
+            ublExtensionItemsSignature.ExtensionContent.XmlUblSignatureSpecification = ublExtensionXMLDSIGresult.Data;
             xmlTagsUblExtensionItems.Add(ublExtensionItemsSignature);
 
             invoice.UBLExtensions.UBLExtensionsItems = xmlTagsUblExtensionItems;
@@ -102,9 +102,9 @@ public class XmlBuilderBl
     /// </summary>
     /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
     /// <returns>A <see cref="OperationResult{XmlTagsUBLExtensionXMLDSIG}"/></returns>
-    public OperationResult<XmlTagsSignature> BuildSignatureXML(Signature digitalSignatureValues)
+    public OperationResult<XmlTagsDigitalSignatureSpecification> BuildSignatureXML(Signature digitalSignatureValues)
     {
-        OperationResult<XmlTagsSignature> operationResult = new OperationResult<XmlTagsSignature>();
+        OperationResult<XmlTagsDigitalSignatureSpecification> operationResult = new OperationResult<XmlTagsDigitalSignatureSpecification>();
 
         try
         {
@@ -114,7 +114,7 @@ public class XmlBuilderBl
                 return operationResult;
             }
 
-            XmlTagsSignature xmlTagsSignature = new XmlTagsSignature();
+            XmlTagsDigitalSignatureSpecification xmlTagsSignature = new XmlTagsDigitalSignatureSpecification();
             xmlTagsSignature = BuildSignature(digitalSignatureValues);
 
             operationResult.SetOperationResult(ref operationResult, true, xmlTagsSignature, 200);
@@ -184,9 +184,9 @@ public class XmlBuilderBl
         return additionalProperty;
     }
 
-    private static XmlTagsSignature BuildSignature(Signature digitalSignatureValues)
+    private static XmlTagsDigitalSignatureSpecification BuildSignature(Signature digitalSignatureValues)
     {
-        XmlTagsSignature signature = new XmlTagsSignature();
+        XmlTagsDigitalSignatureSpecification signature = new XmlTagsDigitalSignatureSpecification();
         signature.Id = ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
         signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
         signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);

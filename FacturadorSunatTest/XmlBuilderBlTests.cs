@@ -7,7 +7,7 @@ using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
 using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
 using FacturadorSunat.Domain.Entities.SectionDsig;
 using FacturadorSunat.Domain.Entities;
-using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 
 namespace FacturadorSunatTest;
 
@@ -151,7 +151,7 @@ public class XmlBuilderBlTests
             }
         };
 
-        OperationResult<XmlTagsSignature> resultado = XmlBuilderBl.Instance.BuildSignatureXML(datosPruebaFirma);
+        OperationResult<XmlTagsDigitalSignatureSpecification> resultado = XmlBuilderBl.Instance.BuildSignatureXML(datosPruebaFirma);
 
         Assert.True(resultado.Success);
         Assert.NotNull(resultado.Data);

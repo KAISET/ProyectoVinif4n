@@ -1,6 +1,6 @@
 using System.Xml.Serialization;
 using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
-using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignature;
+using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 
 namespace FacturadorSunat.Domain.XmlEntities.XmlInvoice;
 
@@ -12,5 +12,5 @@ public class XmlTagsUblExtensionContent
     public XmlTagsAdditionalInformation? XmlUblAdditionalInformation { get; set; }
 
     [XmlElement(ElementName = "Signature", Namespace = XmlTagsNamespace.Ds)]
-    public XmlTagsSignature? XmlUblSignature { get; set; }
+    public XmlTagsDigitalSignatureSpecification? XmlUblSignatureSpecification { get; set; }
 }
