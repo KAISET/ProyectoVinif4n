@@ -1,9 +1,9 @@
-namespace FacturadorSunat.Domain.Entities.SectionDsig;
+namespace FacturadorSunat.Domain.Entities.SectionDigitalSignatureSpecification;
 
 /// <summary>
 /// Clase usada para llenar las etiquetas de SignedInfo de la firma XMLDSIG 
 /// </summary>
-public class SignatureSignedInfo
+public class DigitalSignatureSpecificationSignedInfo
 {
     // /// <summary>
     // /// Información sobre el valor de la firma e información sobre los datos a firmar 

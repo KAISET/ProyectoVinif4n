@@ -1,15 +1,16 @@
-using System.Net;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-using FacturadorSunat.Domain;
+using FacturadorSunat.Utility;
 using FacturadorSunat.Domain.Entities;
 using FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
-using FacturadorSunat.Domain.Entities.SectionDsig;
+using FacturadorSunat.Domain.Entities.SectionDespatchDocumentReference;
+using FacturadorSunat.Domain.Entities.SectionDigitalSignatureSpecification;
 using FacturadorSunat.Domain.XmlEntities.XmlAdditionalInformation;
+using FacturadorSunat.Domain.XmlEntities.XmlDespatchDocumentReference;
 using FacturadorSunat.Domain.XmlEntities.XmlDigitalSignatureSpecification;
 using FacturadorSunat.Domain.XmlEntities.XmlInvoice;
+using FacturadorSunat.Domain.XmlEntities.XmlAdditionalDocumentReference;
+using FacturadorSunat.Domain.Entities.SectionAdditionalDocumentReference;
+using FacturadorSunat.Domain.XmlEntities.XmlSignatureDeclaration;
+using FacturadorSunat.Domain.Entities.SectionSignatureDeclaration;
 
 namespace FacturadorSunat.Bl;
 
@@ -59,19 +60,13 @@ public class XmlBuilderBl
                 OperationResult<XmlTagsAdditionalInformation> ublAdditionalInformation = new OperationResult<XmlTagsAdditionalInformation>();
                 XmlTagsUblExtensionItems ublExtensionItemsAdditionalInformation = new XmlTagsUblExtensionItems();
                 ublAdditionalInformation = BuildAdditionalInformationXML(invoiceData.UblExtAdditionalInformation);
-                if(ublAdditionalInformation.Success == false || ublAdditionalInformation.Data == null)
-                {
-                    operationResult.SetOperationResult(ref operationResult, false, null, 400, "Error al generar informacion adicional");
-                    return operationResult;
-                }
                 
                 ublExtensionItemsAdditionalInformation.ExtensionContent.XmlUblAdditionalInformation = ublAdditionalInformation.Data;
                 xmlTagsUblExtensionItems.Add(ublExtensionItemsAdditionalInformation);
             }
 
-            XmlTagsUblExtensionItems ublExtensionItemsSignature = new XmlTagsUblExtensionItems();
             // faltan validar que los campos esten llenos
-
+            XmlTagsUblExtensionItems ublExtensionItemsSignature = new XmlTagsUblExtensionItems();
             OperationResult<XmlTagsDigitalSignatureSpecification> ublExtensionXMLDSIGresult = new OperationResult<XmlTagsDigitalSignatureSpecification>();
             ublExtensionXMLDSIGresult = BuildSignatureXML(invoiceData.UblExtSignature);
 
@@ -85,7 +80,26 @@ public class XmlBuilderBl
             xmlTagsUblExtensionItems.Add(ublExtensionItemsSignature);
 
             invoice.UBLExtensions.UBLExtensionsItems = xmlTagsUblExtensionItems;
-            String xmlInvoice = XMLSerializer(invoice);
+            invoice.UBLVersionId = invoiceData.UBLVersionId;
+            invoice.CustomizationId = invoiceData.CustomizationId;
+            invoice.Id = invoiceData.Id;
+            invoice.IssueDate = invoiceData.IssueDate;
+            invoice.InvoiceTypeCode = invoiceData.InvoiceTypeCode;
+            invoice.DocumentCurrencyCode = invoiceData.DocumentCurrencyCode;
+
+            OperationResult<XmlTagsDespatchDocumentReference> despatchDocumentReferenceSection = new OperationResult<XmlTagsDespatchDocumentReference>();
+            despatchDocumentReferenceSection = BuildDespatchDocumentReferenceXML(invoiceData.DespatchDocumentReference);
+            invoice.DespatchDocumentReference = despatchDocumentReferenceSection.Data;
+
+            OperationResult<XmlTagsAdditionalDocumentReference> additionalDocumentReferenceSection = new OperationResult<XmlTagsAdditionalDocumentReference>();
+            additionalDocumentReferenceSection = BuildAdditionalDocumentReferenceXML(invoiceData.AdditionalDocumentReference);
+            invoice.AdditionalDocumentReference = additionalDocumentReferenceSection.Data;
+
+            OperationResult<XmlTagsSignatureDeclaration> signatureDeclarationSection = new OperationResult<XmlTagsSignatureDeclaration>();
+            signatureDeclarationSection = BuildSignatureDeclarationXML(invoiceData.SignatureDeclaration);
+            invoice.SignatureDeclaration = signatureDeclarationSection.Data;
+
+            String xmlInvoice = Tools.XMLSerializer(invoice);
 
             operationResult.SetOperationResult(ref operationResult, true, xmlInvoice, 200);
         }
@@ -102,7 +116,7 @@ public class XmlBuilderBl
     /// </summary>
     /// <param name="digitalSignatureValues">Clase que contiene los valores para XMLDSIG</param>
     /// <returns>A <see cref="OperationResult{XmlTagsUBLExtensionXMLDSIG}"/></returns>
-    public OperationResult<XmlTagsDigitalSignatureSpecification> BuildSignatureXML(Signature digitalSignatureValues)
+    public OperationResult<XmlTagsDigitalSignatureSpecification> BuildSignatureXML(DigitalSignatureSpecification digitalSignatureValues)
     {
         OperationResult<XmlTagsDigitalSignatureSpecification> operationResult = new OperationResult<XmlTagsDigitalSignatureSpecification>();
 
@@ -127,12 +141,44 @@ public class XmlBuilderBl
         return operationResult;
     }
 
+    private static XmlTagsDigitalSignatureSpecification BuildSignature(DigitalSignatureSpecification digitalSignatureValues)
+    {
+        XmlTagsDigitalSignatureSpecification signature = new XmlTagsDigitalSignatureSpecification();
+        signature.Id = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
+        signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
+        signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);
+        signature.SignatureValue = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureValue ?? "");
+        signature.KeyInfo.X509Data.X509Certificate = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.X509Certificate ?? "");
+
+        return signature;
+    }
+
+    private static XmlTagsSignedInfo BuildSignedInfo(DigitalSignatureSpecification digitalSignatureValues)
+    {
+        XmlTagsSignedInfo signedInfo = new XmlTagsSignedInfo();
+        signedInfo.CanonicalizationMethod.Algorithm = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.CanonicalizationMethodAlgorithm ?? "");
+        signedInfo.SignatureMethod.Algorithm = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.SignatureMethodAlgorithm ?? "");
+        
+        return signedInfo;
+    }
+
+    private static XmlTagsReference BuildReference(DigitalSignatureSpecification digitalSignatureValues)
+    {
+        XmlTagsReference reference = new XmlTagsReference();
+        reference.Uri = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.ReferenceUri ?? "");
+        reference.Transforms.Transform.Algorithm = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.TransformAlgorithm ?? "");
+        reference.DigestMethod.Algorithm = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.DigestMethodAlgorithm ?? "");
+        reference.DigestValue = Tools.ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.DigestValue ?? "");
+
+        return reference;
+    }
+
     /// <summary>
     /// Construye la seccion XML para la Additional Information
     /// </summary>
     /// <param name="digitalSignatureValues">Clase que contiene los valores para Additional Information</param>
     /// <returns>A <see cref="OperationResult{XmlTagsUBLExtensionAdditionalInformation}"/></returns>
-    public OperationResult<XmlTagsAdditionalInformation> BuildAdditionalInformationXML(AdditionalInformation additionalInformationValues)
+    public OperationResult<XmlTagsAdditionalInformation> BuildAdditionalInformationXML(AdditionalInformationEntity additionalInformationValues)
     {
         OperationResult<XmlTagsAdditionalInformation> operationResult = new OperationResult<XmlTagsAdditionalInformation>();
 
@@ -157,7 +203,7 @@ public class XmlBuilderBl
         return operationResult;
     }
 
-    private static XmlTagsAdditionalInformation BuildAdditionalInformation(AdditionalInformation additionalInformationValues)
+        private static XmlTagsAdditionalInformation BuildAdditionalInformation(AdditionalInformationEntity additionalInformationValues)
     {
         XmlTagsAdditionalInformation additionalInformation = new XmlTagsAdditionalInformation();
         additionalInformation.AdditionalMonetaryTotal.ID = additionalInformationValues.AdditionalMonetaryTotal.Id;
@@ -174,7 +220,7 @@ public class XmlBuilderBl
         return additionalInformation;
     }
 
-    private static XmlTagsAdditionalProperty BuildAdditonalProperty(AdditionalInformation additionalInformationValues)
+    private static XmlTagsAdditionalProperty BuildAdditonalProperty(AdditionalInformationEntity additionalInformationValues)
     {
         XmlTagsAdditionalProperty additionalProperty = new XmlTagsAdditionalProperty();
         additionalProperty.ID = additionalInformationValues.AdditionalProperty.Id;
@@ -184,64 +230,107 @@ public class XmlBuilderBl
         return additionalProperty;
     }
 
-    private static XmlTagsDigitalSignatureSpecification BuildSignature(Signature digitalSignatureValues)
+    public OperationResult<XmlTagsDespatchDocumentReference> BuildDespatchDocumentReferenceXML(DespatchDocumentReferenceEntity despatchDocumentReferenceValues)
     {
-        XmlTagsDigitalSignatureSpecification signature = new XmlTagsDigitalSignatureSpecification();
-        signature.Id = ValidateStringIsNullOrEmpty(digitalSignatureValues.Id ?? "");
-        signature.SignedInfo = BuildSignedInfo(digitalSignatureValues);
-        signature.SignedInfo.Reference = BuildReference(digitalSignatureValues);
-        signature.SignatureValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignatureValue ?? "");
-        signature.KeyInfo.X509Data.X509Certificate = ValidateStringIsNullOrEmpty(digitalSignatureValues.X509Certificate ?? "");
+        OperationResult<XmlTagsDespatchDocumentReference> operationResult = new OperationResult<XmlTagsDespatchDocumentReference>();
 
-        return signature;
-    }
-
-    private static XmlTagsSignedInfo BuildSignedInfo(Signature digitalSignatureValues)
-    {
-        XmlTagsSignedInfo signedInfo = new XmlTagsSignedInfo();
-        signedInfo.CanonicalizationMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.CanonicalizationMethodAlgorithm ?? "");
-        signedInfo.SignatureMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.SignatureMethodAlgorithm ?? "");
-        
-        return signedInfo;
-    }
-
-    private static XmlTagsReference BuildReference(Signature digitalSignatureValues)
-    {
-        XmlTagsReference reference = new XmlTagsReference();
-        reference.Uri = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.ReferenceUri ?? "");
-        reference.Transforms.Transform.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.TransformAlgorithm ?? "");
-        reference.DigestMethod.Algorithm = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.DigestMethodAlgorithm ?? "");
-        reference.DigestValue = ValidateStringIsNullOrEmpty(digitalSignatureValues.SignedInfo.DigestValue ?? "");
-
-        return reference;
-    }
-
-    private static String ValidateStringIsNullOrEmpty(String stringValue)
-    {
-        return stringValue = String.IsNullOrEmpty(stringValue) ? "NoData" : stringValue;
-    }
-
-    private static String XMLSerializer(XmlTagsInvoice xmlData)
-    {
-        XmlSerializer serializer = new XmlSerializer(typeof(XmlTagsInvoice));
-        
-        XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
-        namespaces.Add("ext", XmlTagsNamespace.Ext);
-        namespaces.Add("ds", XmlTagsNamespace.Ds);
-        namespaces.Add("sac", XmlTagsNamespace.Sac);
-        namespaces.Add("cbc", XmlTagsNamespace.Cbc);
-
-        XmlWriterSettings writerSettings = new XmlWriterSettings()
+        try
         {
-            Encoding = Encoding.UTF8,
-            Indent = true,
-            OmitXmlDeclaration = true
-        };
+            if (despatchDocumentReferenceValues == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
+            }
 
-        using StringWriter stringWriter = new StringWriter();
-        using XmlWriter xmlWriter = XmlWriter.Create(stringWriter, writerSettings);
+            XmlTagsDespatchDocumentReference xmlTagsDespatchDocumentReference = new XmlTagsDespatchDocumentReference();
+            xmlTagsDespatchDocumentReference = BuildDespatchDocumentReference(despatchDocumentReferenceValues);
 
-        serializer.Serialize(xmlWriter, xmlData, namespaces);
-        return stringWriter.ToString();
+            operationResult.SetOperationResult(ref operationResult, true, xmlTagsDespatchDocumentReference, 200);
+        }
+        catch (Exception ex)
+        {
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar seccion Guias de Remision: {ex.Message}");
+        }
+
+        return operationResult;
+    }
+
+    private static XmlTagsDespatchDocumentReference BuildDespatchDocumentReference(DespatchDocumentReferenceEntity despatchDocumentReferenceValues)
+    {
+        XmlTagsDespatchDocumentReference despatchDocumentReference = new XmlTagsDespatchDocumentReference();
+        despatchDocumentReference.DocumentTypeCode = despatchDocumentReferenceValues.DocumentTypeCode;
+        despatchDocumentReference.Id = despatchDocumentReferenceValues.DocumentTypeCode;
+
+        return despatchDocumentReference;
+    }
+
+    public OperationResult<XmlTagsAdditionalDocumentReference> BuildAdditionalDocumentReferenceXML(AdditionalDocumentReferenceEntity additionalDocumentReferenceValues)
+    {
+        OperationResult<XmlTagsAdditionalDocumentReference> operationResult = new OperationResult<XmlTagsAdditionalDocumentReference>();
+
+        try
+        {
+            if (additionalDocumentReferenceValues == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
+            }
+
+            XmlTagsAdditionalDocumentReference xmlTagsAdditionalDocumentReference = new XmlTagsAdditionalDocumentReference();
+            xmlTagsAdditionalDocumentReference = BuildAdditionalDocumentReference(additionalDocumentReferenceValues);
+
+            operationResult.SetOperationResult(ref operationResult, true, xmlTagsAdditionalDocumentReference, 200);
+        }
+        catch (Exception ex)
+        {
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar seccion Guias de Remision: {ex.Message}");
+        }
+
+        return operationResult;
+    }
+
+    private static XmlTagsAdditionalDocumentReference BuildAdditionalDocumentReference(AdditionalDocumentReferenceEntity additionalDocumentReferenceValues)
+    {
+        XmlTagsAdditionalDocumentReference additionalDocumentReference = new XmlTagsAdditionalDocumentReference();
+        additionalDocumentReference.DocumentTypeCode = additionalDocumentReference.DocumentTypeCode;
+        additionalDocumentReference.Id = additionalDocumentReference.Id;
+
+        return additionalDocumentReference;
+    }
+
+    public OperationResult<XmlTagsSignatureDeclaration> BuildSignatureDeclarationXML(SignatureDeclarationEntity signatureDeclarationValues)
+    {
+        OperationResult<XmlTagsSignatureDeclaration> operationResult = new OperationResult<XmlTagsSignatureDeclaration>();
+
+        try
+        {
+            if (signatureDeclarationValues == null)
+            {
+                operationResult.SetOperationResult(ref operationResult, false, null, 400);
+                return operationResult;
+            }
+
+            XmlTagsSignatureDeclaration xmlTagsSignatureDeclaration = new XmlTagsSignatureDeclaration();
+            xmlTagsSignatureDeclaration = BuildSignatureDeclaration(signatureDeclarationValues);
+
+            operationResult.SetOperationResult(ref operationResult, true, xmlTagsSignatureDeclaration, 200);
+        }
+        catch (Exception ex)
+        {
+            operationResult.SetOperationResult(ref operationResult, false, null, 400, $"Error al generar seccion Guias de Remision: {ex.Message}");
+        }
+
+        return operationResult;
+    }
+
+    private static XmlTagsSignatureDeclaration BuildSignatureDeclaration(SignatureDeclarationEntity signatureDeclarationValues)
+    {
+        XmlTagsSignatureDeclaration additionalDocumentReference = new XmlTagsSignatureDeclaration();
+        additionalDocumentReference.ID = signatureDeclarationValues.Id;
+        additionalDocumentReference.SignatoryParty.PartyIdentification.Id = signatureDeclarationValues.SignatoryParty.PartyIdentification.Id;
+        additionalDocumentReference.SignatoryParty.PartyName.Name = signatureDeclarationValues.SignatoryParty.PartyName.Name;
+        additionalDocumentReference.DigitalSignatureAttachment.ExternalReference.Uri = signatureDeclarationValues.DigitalSignatureAttachment.ExternalReference.URI;
+
+        return additionalDocumentReference;
     }
 }

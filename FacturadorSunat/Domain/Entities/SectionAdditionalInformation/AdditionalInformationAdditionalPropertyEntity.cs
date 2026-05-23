@@ -3,7 +3,7 @@ namespace FacturadorSunat.Domain.Entities.SectionAdditionalInformation;
 /// <summary>
 /// Clase usada para llenar los tags de la firma XMLDSIG 
 /// </summary>
-public class AdditionalInformationAdditionalProperty
+public class AdditionalInformationAdditionalPropertyEntity
 {
     public String? Id {get; set;}
     public String? Name {get; set;}

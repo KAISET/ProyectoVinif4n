@@ -1,9 +1,9 @@
-namespace FacturadorSunat.Domain.Entities.SectionDsig;
+namespace FacturadorSunat.Domain.Entities.SectionDigitalSignatureSpecification;
 
 /// <summary>
 /// Clase usada para llenar los tags de la firma XMLDSIG 
 /// </summary>
-public class Signature
+public class DigitalSignatureSpecification
 {
     /// <summary>
     /// Identificaciónde la firma dentro del documento 
@@ -12,7 +12,7 @@ public class Signature
     /// <summary>
     /// Contiene los campos para las etiquetas signed info
     /// </summary>
-    public SignatureSignedInfo? SignedInfo {get; set;}
+    public DigitalSignatureSpecificationSignedInfo? SignedInfo {get; set;}
     /// <summary>
     /// Contiene la firma codificada en Base64
     /// </summary>

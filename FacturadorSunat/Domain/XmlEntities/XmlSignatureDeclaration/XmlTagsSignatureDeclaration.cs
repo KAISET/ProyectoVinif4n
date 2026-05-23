@@ -8,4 +8,8 @@ public class XmlTagsSignatureDeclaration
 
     [XmlElement(ElementName = "SignatoryParty ", Namespace = XmlTagsNamespace.Cac)]
     public XmlTagsSignatoryParty? SignatoryParty {get; set;} = new();
+
+    [XmlElement(ElementName = "DigitalSignatureAttachment ", Namespace = XmlTagsNamespace.Cac)]
+    public XmlTagsDigitalSignatureAttachment? DigitalSignatureAttachment {get; set;} = new();
+
 }
